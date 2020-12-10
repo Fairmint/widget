@@ -5,6 +5,13 @@
 <div id="fairmint-invest-widget"></div>
 ```
 
+* (Optional) You can apply your own style for the button (margin, padding, ...)
+```
+  #fairmint-invest-widget {
+    margin: 0 10px;
+  }
+```
+
 * Append following script into `body` element.
 
 ```
