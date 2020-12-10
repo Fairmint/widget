@@ -1,0 +1,33 @@
+{
+  "name": "widget",
+  "version": "1.0.0",
+  "description": "Widget to display information about your CAFE offering on your website",
+  "private": true,
+  "scripts": {
+    "build": "webpack",
+    "start": "npm run watch & webpack serve",
+    "watch": "webpack --watch",
+    "lint": "eslint src --ext .js",
+    "lint:fix": "eslint src --ext .js --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fairmint/widget.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fairmint/widget/issues"
+  },
+  "homepage": "https://github.com/Fairmint/widget#readme",
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.10",
+    "babel-loader": "^8.2.2",
+    "copy-webpack-plugin": "^6.3.2",
+    "eslint": "^7.15.0",
+    "webpack": "^5.9.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
+  }
+}
