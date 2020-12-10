@@ -7,33 +7,17 @@
 </head>
 <body>
   <div id="app">
-    Customer Website Contents go here.
+    Customer Website Contents go here. bla bla bla bla bla
+    <div id="fairmint-invest-widget"></div>
   </div>
   <script>
-    var APP_ID = "APP_ID";
-
     window.fairmintSettings = {
-      app_id: APP_ID
+      org: 'fairmint',
+      width: 123,
+      height: 44,
     };
 
-    // TODO This script should be minified and given to the end users.
-    (function() {
-      var loadScript = function() {
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.async = true;
-        // TODO This should be a url to the main js script file hosted on the fairmint server or something else. 
-        // APP_ID must be attached in the url for the key validation.
-        // e.g. https://static.fairmint.co/fairmint/js/{APP_ID}/widget.js
-        script.src = './main.js';
-
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(script, firstScriptTag);
-      };
-
-      window.addEventListener('load', loadScript, false);
-    })();
-
+    window.addEventListener("load",(function(){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.src="./widget.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}),!1);
   </script>
 </body>
 </html>
