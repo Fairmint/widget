@@ -21,6 +21,7 @@ window.fairmintSettings = {
   height: 44, // Invest button height in pixel. default: 48
 };
 
+// Do not change below script.
 window.addEventListener("load",(function(){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.src="https://static.fairmint.co/widget/fairmint.20201209.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}),!1);
 ```
 
