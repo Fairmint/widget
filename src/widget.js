@@ -1,6 +1,35 @@
-const buttonId = 'fairmint-invest-widget';
 const { fairmintSettings } = window;
 let offeringStatus;
+
+const breakpoints = {
+  lg: 992,
+  sm: 576,
+};
+
+const screenWidth = () => {
+  return Math.max(
+    document.body.scrollWidth,
+    document.documentElement.scrollWidth,
+    document.body.offsetWidth,
+    document.documentElement.offsetWidth,
+    document.documentElement.clientWidth
+  );
+};
+
+const isLg = () => {
+  return screenWidth() > breakpoints.lg;
+};
+
+const isSm = () => {
+  return screenWidth() > breakpoints.sm;
+};
+
+const buttonBackground = () => {
+  if (!isLg()) {
+    return offeringStatus.company_icon_logo_mobile;
+  }
+  return offeringStatus.company_icon_logo_desktop;
+};
 
 const buttonColor = () => {
   return offeringStatus.color_button ? offeringStatus.color_button  : 'rgb(244, 159, 15)';
@@ -10,110 +39,7 @@ const investors = () => {
   return offeringStatus.investors ? offeringStatus.investors.length : 0;
 };
 
-const generateCSS = () => {
-  const style = document.createElement('style');
-  style.innerHTML = `
-    #fairmint-invest-widget {
-      display: inline-block;
-    }
-
-    .fairmint-widget-container div, .fairmint-widget-container iframe, .fairmint-widget-container span {
-      border: none;
-    }
-
-    .fairmint-widget-frame {
-      z-index: 99999999;
-      position: fixed;
-      min-width: 336px;
-      min-height: ${investors() >= 5 ? 560 : 467}px;
-      visibility: hidden;
-    }
-
-    .fairmint-widget-frame-visible {
-      visibility: visible;
-    }
-
-    .fairmint-widget-frame iframe {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-    }
-
-    .fairmint-invest-button {
-      display: inline-flex;
-      align-items: center;
-      cursor: pointer;
-      background: ${buttonColor()};
-      box-shadow: 0 0 0 0 rgba(34,36,38,.15) inset;
-      color: white;
-      text-shadow: none;
-      outline: 0;
-      border: none;
-      vertical-align: baseline;
-      font-style: normal;
-      text-align: center;
-      text-decoration: none;
-      border-radius: 4px;
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 20px;
-      letter-spacing: normal;
-      // padding: 8px 20px;
-      position: relative;
-      text-align: center;
-      background-position: center;
-      transition: background 0.8s;
-      width: ${fairmintSettings.width ? fairmintSettings.width : 132 }px;
-      height: ${fairmintSettings.height ? fairmintSettings.height : 48 }px;
-    }
-
-    .fairmint-invest-button-wrapper {
-      display: inline-flex;
-      margin: auto;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .fairmint-invest-button-img {
-      margin-left: 8px;
-      width: 28px;
-    }
-  `;
-  document.getElementsByTagName('head')[0].appendChild(style);
-};
-
-const generateButton = () => {
-  const buttonContainer = document.getElementById(buttonId);
-
-  if (!buttonContainer) {
-    console.error('Couldn\'t find \'fairmint-invest-widget\' DOM element!');
-    return;
-  }
-
-  const button = document.createElement('button');
-  button.className = 'fairmint-invest-button';
-  const buttonWrapper = document.createElement('div');
-  buttonWrapper.className = 'fairmint-invest-button-wrapper';
-
-  const buttonText = document.createElement('span');
-  buttonText.textContent = 'Invest';
-
-  const buttonImage = document.createElement('img');
-  buttonImage.src = offeringStatus.company_icon_logo_desktop;
-  buttonImage.className = 'fairmint-invest-button-img';
-
-  buttonWrapper.appendChild(buttonText);
-  buttonWrapper.appendChild(buttonImage);
-  button.appendChild(buttonWrapper);
-  buttonContainer.appendChild(button);
-
-  generateIframe(button);
-};
-
 const widgetHTML = `
-<html>
-
-<head>
   <style>
     * {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
@@ -132,14 +58,30 @@ const widgetHTML = `
       transition: box-shadow .1s ease, transform .1s ease, -webkit-box-shadow .1s ease, -webkit-transform .1s ease;
       background: white;
       box-shadow: 0px 0px 3px rgba(5, 5, 5, 0.04), 28px 28px 88px rgba(0, 0, 0, 0.08);
-      border-radius: 4px;
+      border-radius: #BORDER_RADIUS#px;
       overflow: hidden;
     }
 
     .fairmint-cafe-widget-card-header {
+      position: relative;
       font-size: 16px;
       padding: 20px 24px;
       background: linear-gradient(251.01deg, #COLOR1# 31.47%, #COLOR2# 99.55%);
+    }
+
+    .fairmint-cafe-widget-close-btn {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      background: none;
+      border: 0;
+      outline: 0;
+      cursor: pointer;
+      visibility: hidden;
+    }
+
+    .fairmint-cafe-widget-close-btn-visible {
+      visibility: visible;
     }
 
     .fairmint-cafe-widget-company-name {
@@ -274,15 +216,17 @@ const widgetHTML = `
       margin-right: 5px;
     }
   </style>
-</head>
-
-<body>
   <div class="fairmint-cafe-widget-card">
     <div class="fairmint-cafe-widget-card-header">
       <img class="fairmint-cafe-widget-company-name" src="#COMPANY_NAME_LOGO#">
       <div class="fairmint-cafe-widget-company-description">
         We are an open equity company <span role="img" aria-label="emoji">😃</span>
       </div>
+      <button class="fairmint-cafe-widget-close-btn #CLOSE_BTN_VISIBLE_CLASS#">
+        <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M3.41421 1.13193C2.63317 0.35088 1.36684 0.35088 0.585788 1.13193C-0.195261 1.91298 -0.195261 3.17931 0.585788 3.96036L7.17157 10.5461L0.585788 17.1319C-0.195262 17.913 -0.195262 19.1793 0.585786 19.9604C1.36684 20.7414 2.63316 20.7414 3.41421 19.9604L10 13.3746L16.5858 19.9604C17.3668 20.7414 18.6332 20.7414 19.4142 19.9604C20.1953 19.1793 20.1953 17.913 19.4142 17.1319L12.8284 10.5461L19.4142 3.96036C20.1953 3.17931 20.1953 1.91298 19.4142 1.13193C18.6332 0.35088 17.3668 0.35088 16.5858 1.13193L10 7.71772L3.41421 1.13193Z" fill="white"/>
+        </svg>      
+      </button>
     </div>
 
     <div class="fairmint-cafe-widget-card-offering">
@@ -427,12 +371,140 @@ const widgetHTML = `
       </a>
     </div>
   </div>
-</body>
-
-</html>
+  <script>
+    document.getElementsByClassName('fairmint-cafe-widget-close-btn')[0].addEventListener('click', (e) => {
+      e.preventDefault();
+      const frameContainer = window.parent.document.getElementsByClassName('fairmint-widget-frame')[#CONTAINER_INDEX#];
+      frameContainer.classList.toggle('fairmint-widget-frame-visible');
+    });
+  </script>
 `;
 
+const generateCSS = () => {
+  const style = document.createElement('style');
+  style.innerHTML = `
+    .fairmint-invest-widget {
+      display: inline-flex;
+    }
+
+    .fairmint-widget-container div, .fairmint-widget-container iframe, .fairmint-widget-container span {
+      border: none;
+    }
+
+    .fairmint-widget-frame {
+      z-index: 99999999;
+      position: fixed;
+      min-width: 336px;
+      min-height: ${investors() >= 5 ? 560 : 467}px;
+      visibility: hidden;
+    }
+
+    .fairmint-widget-frame-visible {
+      visibility: visible;
+    }
+
+    .fairmint-widget-frame iframe {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+    }
+
+    .fairmint-invest-button {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      background: ${buttonColor()};
+      box-shadow: 0 0 0 0 rgba(34,36,38,.15) inset;
+      color: white;
+      text-shadow: none;
+      outline: 0;
+      border: none;
+      vertical-align: baseline;
+      font-style: normal;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 20px;
+      letter-spacing: normal;
+      position: relative;
+      background-position: center;
+      transition: background 0.8s;
+      width: ${fairmintSettings.width ? fairmintSettings.width : 132 }px;
+      height: ${fairmintSettings.height ? fairmintSettings.height : 48 }px;
+    }
+
+    .fairmint-invest-button-wrapper {
+      display: inline-flex;
+      margin: auto;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .fairmint-invest-button-img {
+      margin-left: 8px;
+      width: 28px;
+    }
+
+    @media screen and (max-width: 992px) {
+      .fairmint-invest-button {
+        width: auto;
+        height: auto;
+        padding: 0;
+        background: transparent;
+      }
+
+      .fairmint-invest-button-wrapper {
+      }
+
+      .fairmint-invest-button-wrapper span {
+        display: none;
+      }
+
+      .fairmint-invest-button-wrapper img.fairmint-invest-button-img {
+        margin: 0;
+        width: ${fairmintSettings.mobileWidth ? fairmintSettings.mobileWidth : 36 }px;
+        height: ${fairmintSettings.mobileHeight ? fairmintSettings.mobileHeight : 36 }px;
+      }
+    }
+  `;
+  document.getElementsByTagName('head')[0].appendChild(style);
+};
+
+const generateButton = (container, containerIndex) => {
+  const button = document.createElement('button');
+  button.className = 'fairmint-invest-button';
+  const buttonWrapper = document.createElement('div');
+  buttonWrapper.className = 'fairmint-invest-button-wrapper';
+
+  const buttonText = document.createElement('span');
+  buttonText.textContent = 'Invest';
+
+  const buttonImage = document.createElement('img');
+  buttonImage.src = buttonBackground();
+  buttonImage.className = 'fairmint-invest-button-img';
+
+  buttonWrapper.appendChild(buttonText);
+  buttonWrapper.appendChild(buttonImage);
+  button.appendChild(buttonWrapper);
+  container.appendChild(button);
+
+  generateIframe(button, containerIndex);
+
+  window.addEventListener('resize', () => {
+    buttonImage.src = buttonBackground();
+  });
+};
+
 const getIframePosition = (investButton) => {
+  if (!isSm()) {
+    return `
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    `;
+  }
   const buttonClientRect = investButton.getBoundingClientRect();
   return `
     top: ${buttonClientRect.y + buttonClientRect.height + 4}px;
@@ -440,24 +512,11 @@ const getIframePosition = (investButton) => {
   `;
 };
 
-const generateIframe = (investButton) => {
-  const container = document.createElement('div');
-  container.className = 'fairmint-widget-container';
-
-  const widgetFrame = document.createElement('div');
-  widgetFrame.className = 'fairmint-widget-frame' ;
-  widgetFrame.style.cssText = getIframePosition(investButton);
-
-  const iframe = document.createElement('iframe');
-  iframe.name = 'fairmint-widget-frame';
-  iframe.allowFullscreen = true;
-  iframe.title = 'CAFE Offering Widget';
-
-  widgetFrame.appendChild(iframe);
-  container.appendChild(widgetFrame);
-  document.getElementsByTagName('body')[0].appendChild(container);
-
+const getIframeContent = (containerIndex) => {
   let content = widgetHTML;
+  content = content.replace('#CLOSE_BTN_VISIBLE_CLASS#', !isSm() ? 'fairmint-cafe-widget-close-btn-visible' : '');
+  content = content.replace('#CONTAINER_INDEX#', containerIndex);
+  content = content.replace('#BORDER_RADIUS#', isSm() ? 4 : 0);
   content = content.replace(/#COLOR1#/g, offeringStatus.color1 ? offeringStatus.color1 : 'rgb(86, 41, 182)');
   content = content.replace('#COLOR2#', offeringStatus.color2 ? offeringStatus.color2 : 'rgb(117, 73, 211)');
   content = content.replace('#COMPANY_NAME_LOGO#', offeringStatus.company_name_logo);
@@ -494,7 +553,27 @@ const generateIframe = (investButton) => {
     </div>`;
   }
   content = content.replace('#INVESTORS#', investorsDom);
-  iframe.contentWindow.document.write(content);
+  return content;
+};
+
+const generateIframe = (investButton, containerIndex) => {
+  const container = document.createElement('div');
+  container.className = 'fairmint-widget-container';
+
+  const widgetFrame = document.createElement('div');
+  widgetFrame.className = 'fairmint-widget-frame' ;
+  widgetFrame.style.cssText = getIframePosition(investButton);
+
+  const iframe = document.createElement('iframe');
+  iframe.name = 'fairmint-widget-frame';
+  iframe.allowFullscreen = true;
+  iframe.title = 'CAFE Offering Widget';
+
+  widgetFrame.appendChild(iframe);
+  container.appendChild(widgetFrame);
+  document.getElementsByTagName('body')[0].appendChild(container);
+
+  iframe.contentWindow.document.write(getIframeContent(containerIndex));
 
   investButton.addEventListener('click', (e) => {
     e.preventDefault();
@@ -504,6 +583,8 @@ const generateIframe = (investButton) => {
 
   window.addEventListener('resize', () => {
     widgetFrame.style.cssText = getIframePosition(investButton);
+    iframe.contentWindow.document.body.innerHTML = '';
+    iframe.contentWindow.document.write(getIframeContent(containerIndex));
   });
 };
 
@@ -513,12 +594,21 @@ const generateIframe = (investButton) => {
     return;
   }
 
+  const widgetContainers = document.getElementsByClassName('fairmint-invest-widget');
+
+  if (!widgetContainers) {
+    console.error('Couldn\'t find \'fairmint-invest-widget\' DOM element!');
+    return;
+  }
+
   fetch(`https://api.dev.fairmint.co/service1/offering/status?orgId=${fairmintSettings.org}`)
     .then(res => res.json())
     .then(res => {
       offeringStatus = res;
       generateCSS();
-      generateButton();
+      for (let i = 0; i < widgetContainers.length; i++) {
+        generateButton(widgetContainers[i], i);
+      }
     })
     .catch(err => {
       console.error(err);

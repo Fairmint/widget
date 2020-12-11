@@ -8,16 +8,17 @@
 <body>
   <div id="app">
     Customer Website Contents go here. bla bla bla bla bla
-    <div id="fairmint-invest-widget"></div>
+    <div class="fairmint-invest-widget"></div>
   </div>
   <script>
     window.fairmintSettings = {
       org: 'fairmint',
       width: 123,
       height: 44,
+      mobileWidth: 36,
+      mobileHeight: 36,
     };
-
-    window.addEventListener("load",(function(){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.src="https://static.fairmint.co/widget/fairmint.20201209.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}),!1);
   </script>
+  <script src="./main.js"></script>
 </body>
 </html>
