@@ -374,7 +374,7 @@ const widgetHTML = `
     document.getElementsByClassName('fairmint-cafe-widget-close-btn')[0].addEventListener('click', (e) => {
       e.preventDefault();
       const frameContainer = window.parent.document.getElementsByClassName('fairmint-widget-frame')[#CONTAINER_INDEX#];
-      frameContainer.classList.toggle('fairmint-widget-frame-visible');
+      frameContainer.classList.remove('fairmint-widget-frame-visible');
     });
   </script>
 `;
@@ -398,10 +398,6 @@ const generateCSS = () => {
       padding-top: 4px;
       visibility: hidden;
       box-shadow: 0px 0px 3px rgba(5, 5, 5, 0.04), 28px 28px 88px rgba(0, 0, 0, 0.08);
-    }
-
-    .fairmint-widget-frame:hover {
-      visibility: visible;
     }
 
     .fairmint-widget-frame-visible {
@@ -507,7 +503,6 @@ const getIframePosition = (investButton) => {
       top: 0;
       left: 0;
       right: 0;
-      bottom: 0;
     `;
   }
   const buttonClientRect = investButton.getBoundingClientRect();
@@ -580,22 +575,52 @@ const generateIframe = (investButton, containerIndex) => {
 
   iframe.contentWindow.document.write(getIframeContent(containerIndex));
 
-  investButton.addEventListener('mouseover', (e) => {
+  const showFrame = (e) => {
     e.preventDefault();
     e.stopPropagation();
     widgetFrame.classList.add('fairmint-widget-frame-visible');
-  });
-
-  investButton.addEventListener('mouseout', (e) => {
+  };
+  const hideFrame = (e) => {
     e.preventDefault();
     e.stopPropagation();
     widgetFrame.classList.remove('fairmint-widget-frame-visible');
-  });
+  };
+  const toggleFrame = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    widgetFrame.classList.toggle('fairmint-widget-frame-visible');
+  };
+  const noAction = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const setHandlers = () => {
+    if (isSm()) {
+      investButton.onmouseover = showFrame;
+      investButton.onmouseout = hideFrame;
+      widgetFrame.onmouseover = showFrame;
+      widgetFrame.onmouseout = hideFrame;
+      investButton.onclick = noAction;
+    } else {
+      investButton.onmouseover = noAction;
+      investButton.onmouseout = noAction;
+      widgetFrame.onmouseover = noAction;
+      widgetFrame.onmouseout = noAction;
+      investButton.onclick = toggleFrame;
+    }
+  };
+
+  setHandlers();
 
   window.addEventListener('resize', () => {
     widgetFrame.style.cssText = getIframePosition(investButton);
-    iframe.contentWindow.document.body.innerHTML = '';
-    iframe.contentWindow.document.write(getIframeContent(containerIndex));
+    if (iframe.contentWindow) {
+      iframe.contentWindow.document.body.innerHTML = '';
+      iframe.contentWindow.document.write(getIframeContent(containerIndex));
+    }
+
+    setHandlers();
   });
 };
 
@@ -623,7 +648,9 @@ const generateIframe = (investButton, containerIndex) => {
       offeringStatus = res;
       generateCSS();
       for (let i = 0; i < widgetContainers.length; i++) {
-        generateButton(widgetContainers[i], i);
+        if (!widgetContainers[i].childNodes.length) {
+          generateButton(widgetContainers[i], i);
+        }
       }
     })
     .catch(err => {
