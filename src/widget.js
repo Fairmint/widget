@@ -542,7 +542,7 @@ const getIframeContent = (containerIndex) => {
         <div class="fairmint-cafe-widget-card-investors-list">`;
     for (const investor of offeringStatus.investors.slice(0, 5)) {
       investorsDom += '<div class="fairmint-cafe-widget-card-investor-avatar">';
-      investorsDom += `<img alt="" src="${investor}" />`;
+      investorsDom += `<img alt="" src="${investor.highlight?.picture}" />`;
       investorsDom += '</div>';
     }
     investorsDom += `
