@@ -84,7 +84,6 @@ const widgetHTML = `
     }
 
     .fairmint-cafe-widget-company-name {
-      width: 115px;
       height: 55px;
       margin-bottom: 10px;
     }
