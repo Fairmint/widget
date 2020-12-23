@@ -57,7 +57,6 @@ const widgetHTML = `
       flex-direction: column;
       transition: box-shadow .1s ease, transform .1s ease, -webkit-box-shadow .1s ease, -webkit-transform .1s ease;
       background: white;
-      box-shadow: 0px 0px 3px rgba(5, 5, 5, 0.04), 28px 28px 88px rgba(0, 0, 0, 0.08);
       border-radius: #BORDER_RADIUS#px;
       overflow: hidden;
     }
@@ -86,6 +85,7 @@ const widgetHTML = `
 
     .fairmint-cafe-widget-company-name {
       width: 115px;
+      height: 55px;
       margin-bottom: 10px;
     }
 
@@ -395,8 +395,14 @@ const generateCSS = () => {
       z-index: 99999999;
       position: fixed;
       min-width: 336px;
-      min-height: ${investors() >= 5 ? 560 : 467}px;
+      min-height: ${investors() >= 5 ? 579 : 486}px;
+      padding-top: 4px;
       visibility: hidden;
+      box-shadow: 0px 0px 3px rgba(5, 5, 5, 0.04), 28px 28px 88px rgba(0, 0, 0, 0.08);
+    }
+
+    .fairmint-widget-frame:hover {
+      visibility: visible;
     }
 
     .fairmint-widget-frame-visible {
@@ -507,7 +513,7 @@ const getIframePosition = (investButton) => {
   }
   const buttonClientRect = investButton.getBoundingClientRect();
   return `
-    top: ${buttonClientRect.y + buttonClientRect.height + 4}px;
+    top: ${buttonClientRect.y + buttonClientRect.height}px;
     left: ${buttonClientRect.x + buttonClientRect.width - 336}px;
   `;
 };
@@ -522,10 +528,10 @@ const getIframeContent = (containerIndex) => {
   content = content.replace('#COMPANY_NAME_LOGO#', offeringStatus.company_name_logo);
   content = content.replace('#CAFE_LOGO#', offeringStatus.cafe_logo);
   content = content.replace('#CAFE_NAME#', offeringStatus.cafe_name);
-  content = content.replace('#LATEST_PRICE#', offeringStatus.latest_price.toFixed(2));
+  content = content.replace('#LATEST_PRICE#', (offeringStatus.latest_price || 0).toFixed(2));
   content = content.replace('#AMOUNT_INVESTED#', Math.round(offeringStatus.amount_invested).toLocaleString());
   content = content.replace('#COMPANY_VALUATION#', Math.round(offeringStatus.company_valuation).toLocaleString());
-  content = content.replace('#PERFORMANCE#', offeringStatus.performance.toFixed(1));
+  content = content.replace('#PERFORMANCE#', (offeringStatus.performance || 0).toFixed(1));
   content = content.replace('#SIGNUP_URL#', offeringStatus.signup_url);
   content = content.replace('#SIGNIN_URL#', offeringStatus.signin_url);
   content = content.replace('#COLOR_BTN#', buttonColor());
@@ -575,10 +581,16 @@ const generateIframe = (investButton, containerIndex) => {
 
   iframe.contentWindow.document.write(getIframeContent(containerIndex));
 
-  investButton.addEventListener('click', (e) => {
+  investButton.addEventListener('mouseover', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    widgetFrame.classList.toggle('fairmint-widget-frame-visible');
+    widgetFrame.classList.add('fairmint-widget-frame-visible');
+  });
+
+  investButton.addEventListener('mouseout', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    widgetFrame.classList.remove('fairmint-widget-frame-visible');
   });
 
   window.addEventListener('resize', () => {
@@ -601,7 +613,12 @@ const generateIframe = (investButton, containerIndex) => {
     return;
   }
 
-  fetch(`https://api.dev.fairmint.co/service1/offering/status?orgId=${fairmintSettings.org}`)
+  const stage = fairmintSettings.stage === 'production' ?
+    'invest' : (
+      fairmintSettings.stage === 'staging' ? 'preview' : 'dev'
+    );
+
+  fetch(`https://api.${stage}.fairmint.co/service1/offering/status?orgId=${fairmintSettings.org}`)
     .then(res => res.json())
     .then(res => {
       offeringStatus = res;
