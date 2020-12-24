@@ -39,6 +39,23 @@ const investors = () => {
   return offeringStatus.investors ? offeringStatus.investors.length : 0;
 };
 
+const itemsCount = () => {
+  let count = 0;
+  if (fairmintSettings.amountInvested) {
+    count++;
+  }
+
+  if (fairmintSettings.companyValuation) {
+    count++;
+  }
+
+  if (fairmintSettings.performance) {
+    count++;
+  }
+
+  return count;
+};
+
 const widgetHTML = `
   <style>
     * {
@@ -214,6 +231,10 @@ const widgetHTML = `
       line-height: 16px;
       margin-right: 5px;
     }
+
+    .fairmint-cafe-widget-card-invisible {
+      display: none;
+    }
   </style>
   <div class="fairmint-cafe-widget-card">
     <div class="fairmint-cafe-widget-card-header">
@@ -239,7 +260,7 @@ const widgetHTML = `
         </div>
       </div>
 
-      <div class="fairmint-cafe-widget-card-offering-feed">
+      <div class="fairmint-cafe-widget-card-offering-feed #AMOUNT_INVESTED_VISIBLE#">
         <div class="fairmint-cafe-widget-card-offering-feed-label">
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle opacity="0.7" cx="20" cy="20" r="20" fill="#BDFBE4" />
@@ -272,7 +293,7 @@ const widgetHTML = `
         </div>
       </div>
 
-      <div class="fairmint-cafe-widget-card-offering-feed">
+      <div class="fairmint-cafe-widget-card-offering-feed #COMPANY_VALUATION_VISIBLE#">
         <div class="fairmint-cafe-widget-card-offering-feed-label">
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="20" cy="20" r="20" fill="#C4C4C4" />
@@ -291,7 +312,7 @@ const widgetHTML = `
         </div>
       </div>
 
-      <div class="fairmint-cafe-widget-card-offering-feed">
+      <div class="fairmint-cafe-widget-card-offering-feed #PERFORMANCE_VISIBLE#">
         <div class="fairmint-cafe-widget-card-offering-feed-label">
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle opacity="0.6" cx="20" cy="20" r="20" fill="#B8F9FF" />
@@ -394,7 +415,7 @@ const generateCSS = () => {
       z-index: 99999999;
       position: fixed;
       min-width: 336px;
-      min-height: ${investors() >= 5 ? 579 : 486}px;
+      min-height: ${(investors() >= 5 ? 459 : 366) + itemsCount() * 40}px;
       padding-top: 4px;
       visibility: hidden;
       box-shadow: 0px 0px 3px rgba(5, 5, 5, 0.04), 28px 28px 88px rgba(0, 0, 0, 0.08);
@@ -523,12 +544,30 @@ const getIframeContent = (containerIndex) => {
   content = content.replace('#CAFE_LOGO#', offeringStatus.cafe_logo);
   content = content.replace('#CAFE_NAME#', offeringStatus.cafe_name);
   content = content.replace('#LATEST_PRICE#', (offeringStatus.latest_price || 0).toFixed(2));
-  content = content.replace('#AMOUNT_INVESTED#', Math.round(offeringStatus.amount_invested).toLocaleString());
-  content = content.replace('#COMPANY_VALUATION#', Math.round(offeringStatus.company_valuation).toLocaleString());
-  content = content.replace('#PERFORMANCE#', (offeringStatus.performance || 0).toFixed(1));
   content = content.replace('#SIGNUP_URL#', offeringStatus.signup_url);
   content = content.replace('#SIGNIN_URL#', offeringStatus.signin_url);
   content = content.replace('#COLOR_BTN#', buttonColor());
+
+  if (fairmintSettings.amountInvested) {
+    content = content.replace('#AMOUNT_INVESTED#', Math.round(offeringStatus.amount_invested).toLocaleString());
+    content = content.replace('#AMOUNT_INVESTED_VISIBLE#', '');
+  } else {
+    content = content.replace('#AMOUNT_INVESTED_VISIBLE#', 'fairmint-cafe-widget-card-invisible');
+  }
+
+  if (fairmintSettings.companyValuation) {
+    content = content.replace('#COMPANY_VALUATION#', Math.round(offeringStatus.company_valuation).toLocaleString());
+    content = content.replace('#COMPANY_VALUATION_VISIBLE#', '');
+  } else {
+    content = content.replace('#COMPANY_VALUATION_VISIBLE#', 'fairmint-cafe-widget-card-invisible');
+  }
+
+  if (fairmintSettings.performance) {
+    content = content.replace('#PERFORMANCE#', (offeringStatus.performance || 0).toFixed(1));
+    content = content.replace('#PERFORMANCE_VISIBLE#', '');
+  } else {
+    content = content.replace('#PERFORMANCE_VISIBLE#', 'fairmint-cafe-widget-card-invisible');
+  }
 
   let investorsDom = '';
   if (investors() >= 5) {
@@ -542,7 +581,7 @@ const getIframeContent = (containerIndex) => {
         <div class="fairmint-cafe-widget-card-investors-list">`;
     for (const investor of offeringStatus.investors.slice(0, 5)) {
       investorsDom += '<div class="fairmint-cafe-widget-card-investor-avatar">';
-      investorsDom += `<img alt="" src="${investor.highlight?.picture}" />`;
+      investorsDom += `<img alt="" src="${investor.picture}" />`;
       investorsDom += '</div>';
     }
     investorsDom += `
