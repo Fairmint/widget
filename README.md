@@ -25,6 +25,7 @@ window.fairmintSettings = {
   amountInvested: true, // Show Amount Invested field. default: false
   companyValuation: true, // Show Company Valuation field. default: false
   performance: true, // Show Performance field. default: false
+  type: 'button', // The widget type. default option: 'button'. possible options: 'button', 'icon', 'embed'
 };
 
 // Do not change below script.
