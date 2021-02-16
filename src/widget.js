@@ -326,12 +326,12 @@ const generateButton = (container, containerIndex, isIcon = false) => {
 };
 
 const generateWidget = (container, containerIndex, type) => {
-  if (type === 'button') {
-    generateButton(container, containerIndex);
+  if (type === 'embed') {
+    generateIframe(container, containerIndex, true);
   } else if (type === 'icon') {
     generateButton(container, containerIndex, true);
-  } else { // embed
-    generateIframe(container, containerIndex, true);
+  } else { // button
+    generateButton(container, containerIndex);
   }
 };
 
