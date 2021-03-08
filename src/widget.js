@@ -3,6 +3,7 @@ import { isLg, isSm, widgetHTML } from './common';
 const { fairmintSettings } = window;
 let offeringStatus;
 
+const isEmbed = fairmintSettings.type === 'embed';
 
 const buttonBackground = () => {
   if (!isLg()) {
@@ -36,12 +37,16 @@ const itemsCount = () => {
   return count;
 };
 
+const getFrameHeight = () => (investors() >= 5 ? 459 : 366) + itemsCount() * 40 + 4;
 
 const generateCSS = () => {
   const style = document.createElement('style');
   style.innerHTML = `
     .fairmint-invest-widget {
-      display: inline-flex;
+      position: relative;
+      display: ${isEmbed ? 'flex' : 'inline-flex'};
+      min-width: ${isEmbed ? 336 : 0}px;
+      min-height: ${isEmbed ? getFrameHeight() : 0}px;
     }
 
     .fairmint-widget-container div, .fairmint-widget-container iframe, .fairmint-widget-container span {
@@ -50,10 +55,10 @@ const generateCSS = () => {
 
     .fairmint-widget-frame {
       z-index: 99999999;
-      position: fixed;
+      position: ${isEmbed ? 'absolute' : 'fixed'};
       min-width: 336px;
-      min-height: ${(investors() >= 5 ? 459 : 366) + itemsCount() * 40}px;
-      padding-top: 4px;
+      min-height: ${getFrameHeight()}px;
+      padding-top: ${!isEmbed ? 4 : 0}px;
       visibility: hidden;
       box-shadow: 0px 0px 3px rgba(5, 5, 5, 0.04), 28px 28px 88px rgba(0, 0, 0, 0.08);
     }
@@ -144,7 +149,14 @@ const generateCSS = () => {
   document.getElementsByTagName('head')[0].appendChild(style);
 };
 
-const getIframePosition = (investButton, isEmbed) => {
+const getIframePosition = (investButton) => {
+  if (isEmbed) {
+    return `
+      top: 0;
+      left: 0;
+    `;
+  }
+
   if (!isSm()) {
     return `
       top: 0;
@@ -152,18 +164,19 @@ const getIframePosition = (investButton, isEmbed) => {
       right: 0;
     `;
   }
+  
   const buttonClientRect = investButton.getBoundingClientRect();
   return `
     top: ${buttonClientRect.y + buttonClientRect.height}px;
-    left: ${buttonClientRect.x + buttonClientRect.width - isEmbed ? 336 : 0}px;
+    left: ${buttonClientRect.x + buttonClientRect.width - 336}px;
   `;
 };
 
 const getIframeContent = (containerIndex) => {
   let content = widgetHTML;
-  content = content.replace('#CLOSE_BTN_VISIBLE_CLASS#', !isSm() ? 'fairmint-cafe-widget-close-btn-visible' : '');
+  content = content.replace('#CLOSE_BTN_VISIBLE_CLASS#', !isSm() && !isEmbed ? 'fairmint-cafe-widget-close-btn-visible' : '');
   content = content.replace('#CONTAINER_INDEX#', containerIndex);
-  content = content.replace('#BORDER_RADIUS#', isSm() ? 4 : 0);
+  content = content.replace('#BORDER_RADIUS#', isSm() || isEmbed ? 4 : 0);
   content = content.replace(/#COLOR1#/g, offeringStatus.color1 ? offeringStatus.color1 : 'rgb(86, 41, 182)');
   content = content.replace('#COLOR2#', offeringStatus.color2 ? offeringStatus.color2 : 'rgb(117, 73, 211)');
   content = content.replace('#COMPANY_NAME_LOGO#', offeringStatus.company_name_logo);
@@ -221,13 +234,13 @@ const getIframeContent = (containerIndex) => {
   return content;
 };
 
-const generateIframe = (investButton, containerIndex, isEmbed = false) => {
+const generateIframe = (investButton, containerIndex) => {
   const container = document.createElement('div');
   container.className = 'fairmint-widget-container';
 
   const widgetFrame = document.createElement('div');
   widgetFrame.className = 'fairmint-widget-frame' ;
-  widgetFrame.style.cssText = getIframePosition(investButton, isEmbed);
+  widgetFrame.style.cssText = getIframePosition(investButton);
 
   if (isEmbed) {
     widgetFrame.classList.add('fairmint-widget-frame-visible');
@@ -240,7 +253,12 @@ const generateIframe = (investButton, containerIndex, isEmbed = false) => {
 
   widgetFrame.appendChild(iframe);
   container.appendChild(widgetFrame);
-  document.getElementsByTagName('body')[0].appendChild(container);
+
+  if (isEmbed) {
+    investButton.appendChild(container);
+  } else {
+    document.getElementsByTagName('body')[0].appendChild(container);
+  }
 
   iframe.contentWindow.document.write(getIframeContent(containerIndex));
 
@@ -285,7 +303,7 @@ const generateIframe = (investButton, containerIndex, isEmbed = false) => {
   }
 
   window.addEventListener('resize', () => {
-    widgetFrame.style.cssText = getIframePosition(investButton, isEmbed);
+    widgetFrame.style.cssText = getIframePosition(investButton);
     if (iframe.contentWindow) {
       iframe.contentWindow.document.body.innerHTML = '';
       iframe.contentWindow.document.write(getIframeContent(containerIndex));
@@ -325,10 +343,10 @@ const generateButton = (container, containerIndex, isIcon = false) => {
   });
 };
 
-const generateWidget = (container, containerIndex, type) => {
-  if (type === 'embed') {
+const generateWidget = (container, containerIndex) => {
+  if (isEmbed) {
     generateIframe(container, containerIndex, true);
-  } else if (type === 'icon') {
+  } else if (fairmintSettings.type === 'icon') {
     generateButton(container, containerIndex, true);
   } else { // button
     generateButton(container, containerIndex);
@@ -362,7 +380,7 @@ const generateWidget = (container, containerIndex, type) => {
 
       for (let i = 0; i < widgetContainers.length; i++) {
         if (!widgetContainers[i].childNodes.length) {
-          generateWidget(widgetContainers[i], i, fairmintSettings.type || 'button');
+          generateWidget(widgetContainers[i], i);
         }
       }
     })
