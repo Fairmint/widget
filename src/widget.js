@@ -7,9 +7,9 @@ const isEmbed = fairmintSettings.type === 'embed';
 
 const buttonBackground = () => {
   if (!isLg()) {
-    return offeringStatus.company_icon_logo_mobile;
+    return fairmintSettings.companyIconLogoMobile ? fairmintSettings.companyIconLogoMobile : offeringStatus.company_icon_logo_mobile;
   }
-  return offeringStatus.company_icon_logo_desktop;
+  return fairmintSettings.companyIconLogoDesktop ? fairmintSettings.companyIconLogoDesktop : offeringStatus.company_icon_logo_desktop;
 };
 
 const buttonColor = () => {
@@ -179,8 +179,8 @@ const getIframeContent = (containerIndex) => {
   content = content.replace('#BORDER_RADIUS#', isSm() || isEmbed ? 4 : 0);
   content = content.replace(/#COLOR1#/g, offeringStatus.color1 ? offeringStatus.color1 : 'rgb(86, 41, 182)');
   content = content.replace('#COLOR2#', offeringStatus.color2 ? offeringStatus.color2 : 'rgb(117, 73, 211)');
-  content = content.replace('#COMPANY_NAME_LOGO#', offeringStatus.company_name_logo);
-  content = content.replace('#CAFE_LOGO#', offeringStatus.cafe_logo);
+  content = content.replace('#COMPANY_NAME_LOGO#', fairmintSettings.companyNameLogo ? fairmintSettings.companyNameLogo : offeringStatus.company_name_logo);
+  content = content.replace('#CAFE_LOGO#', fairmintSettings.cafeLogo ? fairmintSettings.cafeLogo : offeringStatus.cafe_logo);
   content = content.replace('#CAFE_NAME#', offeringStatus.cafe_name);
   content = content.replace('#LATEST_PRICE#', (offeringStatus.latest_price || 0).toFixed(2));
   content = content.replace('#SIGNUP_URL#', offeringStatus.signup_url);

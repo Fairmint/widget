@@ -26,6 +26,10 @@ window.fairmintSettings = {
   companyValuation: true, // Show Company Valuation field. default: false
   performance: true, // Show Performance field. default: false
   type: 'button', // The widget type. default option: 'button'. possible options: 'button', 'icon', 'embed'
+  companyNameLogo: 'https://static.fairmint.co/images/fairmint/company_name_logo.png',
+  companyIconLogoDesktop: 'https://static.fairmint.co/images/fairmint/company_icon_logo_desktop.svg',
+  companyIconLogoMobile: 'https://static.fairmint.co/images/fairmint/company_icon_logo_mobile.svg',
+  cafeLogo: 'https://static.fairmint.co/images/fairmint/cafe_logo.svg',
 };
 
 // Do not change below script.
