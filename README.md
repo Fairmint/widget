@@ -1,23 +1,25 @@
 # Steps to install
 
-* Create a new DOM element with class name `fairmint-invest-widget`, where you want to replace the `Invest` button and the widget. _`(Do not use button element)`_
+- Create a new DOM element with class name `fairmint-invest-widget`, where you want to replace the `Invest` button and the widget. _`(Do not use button element)`_
+
 ```
 <div class="fairmint-invest-widget"></div>
 ```
 
-* (Optional) You can apply your own style for the button (margin, padding, ...)
+- (Optional) You can apply your own style for the button (margin, padding, ...)
+
 ```
   .fairmint-invest-widget {
     margin: 0 10px;
   }
 ```
 
-* Append following script into `body` element.
+- Append following script into `body` element.
 
 ```
 window.fairmintSettings = {
   org: 'fairmint', // This is your organization id
-  stage: 'production', // Environment Stage value. possible values 'production', 'staging', 'development'. 
+  stage: 'production', // Environment Stage value. possible values 'production', 'staging', 'development'.
   width: 123, // Invest button width in pixel. default: 132
   height: 44, // Invest button height in pixel. default: 48
   mobileWidth: 36, // Invest button width in pixel for mobile. default: 36
@@ -30,10 +32,11 @@ window.fairmintSettings = {
   companyIconLogoDesktop: 'https://static.fairmint.co/images/fairmint/company_icon_logo_desktop.svg',
   companyIconLogoMobile: 'https://static.fairmint.co/images/fairmint/company_icon_logo_mobile.svg',
   cafeLogo: 'https://static.fairmint.co/images/fairmint/cafe_logo.svg',
+  welcomeMessage: "We are an open equity company",
 };
 
 // Do not change below script.
-window.addEventListener("load",(function(){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.src="https://static.fairmint.co/widget/fairmint.20210607.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}),!1);
+window.addEventListener("load",(function(){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.src="https://static.fairmint.co/widget/fairmint.20210611.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}),!1);
 ```
 
 Thats it! Enjoy your widget. 😀
@@ -62,7 +65,7 @@ const CAFEWidget = () => {
     script.id = "fairmint-widget-init-script"
     script.type = 'text/javascript';
     script.async = true;
-    script.src = 'https://static.fairmint.co/widget/fairmint.20210607.js';
+    script.src = 'https://static.fairmint.co/widget/fairmint.20210611.js';
 
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(script, firstScriptTag);
@@ -85,6 +88,7 @@ export default CAFEWidget
 ```
 
 And use this component like this instead of creating a new DOM element with class name `fairmint-invest-widget`:
+
 ```
   <CAFEWidget />
 ```

@@ -1,30 +1,28 @@
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
+const path = require("path");
+const CopyPlugin = require("copy-webpack-plugin");
 
-const env = process.env.NODE_ENV || 'production';
+const env = process.env.NODE_ENV || "production";
 
 module.exports = {
   entry: {
-    widget: './src/widget.js',
-    main: './src/main.js',
+    widget: "./src/widget.js",
+    main: "./src/main.js",
   },
   output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: "[name].js",
+    path: path.resolve(__dirname, "dist"),
   },
-  devtool: (env === 'development') ? 'inline-source-map' : false,
+  devtool: env === "development" ? "inline-source-map" : false,
   mode: env,
   devServer: {
-    contentBase: './dist',
+    contentBase: "./dist",
     open: true,
     port: 5000,
     hot: true,
   },
   plugins: [
     new CopyPlugin({
-      patterns: [
-        { from: 'demo' },
-      ],
+      patterns: [{ from: "demo" }],
     }),
   ],
   module: {
@@ -33,9 +31,9 @@ module.exports = {
         test: /\.m?js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
           options: {
-            presets: ['@babel/preset-env'],
+            presets: ["@babel/preset-env"],
           },
         },
       },
