@@ -24,15 +24,6 @@ window.fairmintSettings = {
   height: 44, // Invest button height in pixel. default: 48
   mobileWidth: 36, // Invest button width in pixel for mobile. default: 36
   mobileHeight: 36, // Invest button height in pixel for mobile. default: 36
-  amountInvested: true, // Show Amount Invested field. default: false
-  companyValuation: true, // Show Company Valuation field. default: false
-  performance: true, // Show Performance field. default: false
-  type: 'button', // The widget type. default option: 'button'. possible options: 'button', 'icon', 'embed'
-  companyNameLogo: 'https://static.fairmint.co/images/fairmint/company_name_logo.png',
-  companyIconLogoDesktop: 'https://static.fairmint.co/images/fairmint/company_icon_logo_desktop.svg',
-  companyIconLogoMobile: 'https://static.fairmint.co/images/fairmint/company_icon_logo_mobile.svg',
-  cafeLogo: 'https://static.fairmint.co/images/fairmint/cafe_logo.svg',
-  welcomeMessage: "We are an open equity company",
 };
 
 // Do not change below script.
@@ -57,8 +48,6 @@ const CAFEWidget = () => {
       width: 122,
       height: 36,
       stage: process.env.NODE_ENV,
-      amountInvested: true,
-      performance: true,
     };
 
     const script = document.createElement('script');

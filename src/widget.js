@@ -3,63 +3,44 @@ import { isLg, isSm, widgetHTML } from "./common";
 const { fairmintSettings } = window;
 let offeringStatus;
 
-const isEmbed = fairmintSettings.type === "embed";
+const isEmbed = () => offeringStatus.type === "embed";
 
-const buttonBackground = () => {
-  if (!isLg()) {
-    return fairmintSettings.companyIconLogoMobile
-      ? fairmintSettings.companyIconLogoMobile
-      : offeringStatus.company_icon_logo_mobile;
-  }
-  return fairmintSettings.companyIconLogoDesktop
-    ? fairmintSettings.companyIconLogoDesktop
-    : offeringStatus.company_icon_logo_desktop;
-};
+const buttonBackground = () =>
+  isLg()
+    ? offeringStatus.company_logo_desktop
+    : offeringStatus.company_logo_mobile;
 
-const buttonColor = () => {
-  return offeringStatus.color_button
-    ? offeringStatus.color_button
-    : "rgb(244, 159, 15)";
-};
-
-const investors = () => {
-  return offeringStatus.investors ? offeringStatus.investors.length : 0;
-};
+const buttonColor = () => offeringStatus.color_button || "rgb(244, 159, 15)";
 
 const itemsCount = () => {
   let count = 0;
-  if (fairmintSettings.amountInvested) {
+  if (offeringStatus.showAmountInvested) {
     count++;
   }
 
-  if (fairmintSettings.companyValuation) {
+  if (offeringStatus.showCompanyValuation) {
     count++;
   }
 
-  if (fairmintSettings.performance) {
+  if (offeringStatus.showPerformance) {
     count++;
   }
 
   return count;
 };
 
-const welcomeMessage = () => {
-  return fairmintSettings.welcomeMessage
-    ? fairmintSettings.welcomeMessage
-    : "We are an open equity company";
-};
+const welcomeMessage = () => offeringStatus.welcome_msg || "We are an open equity company";
 
-const getFrameHeight = () =>
-  (investors() >= 5 ? 459 : 366) + itemsCount() * 40 + 4;
+const frameHeight = () => (offeringStatus.showInvestors ? 459 : 366) + itemsCount() * 40 + 4;
 
 const generateCSS = () => {
   const style = document.createElement("style");
   style.innerHTML = `
     .fairmint-invest-widget {
       position: relative;
-      display: ${isEmbed ? "flex" : "inline-flex"};
-      min-width: ${isEmbed ? 336 : 0}px;
-      min-height: ${isEmbed ? getFrameHeight() : 0}px;
+      display: ${isEmbed() ? "flex" : "inline-flex"};
+      min-width: ${isEmbed() ? 336 : 0}px;
+      min-height: ${isEmbed() ? frameHeight() : 0}px;
     }
 
     .fairmint-widget-container div, .fairmint-widget-container iframe, .fairmint-widget-container span {
@@ -68,10 +49,10 @@ const generateCSS = () => {
 
     .fairmint-widget-frame {
       z-index: 99999999;
-      position: ${isEmbed ? "absolute" : "fixed"};
+      position: ${isEmbed() ? "absolute" : "fixed"};
       min-width: 336px;
-      min-height: ${getFrameHeight()}px;
-      padding-top: ${!isEmbed ? 4 : 0}px;
+      min-height: ${frameHeight()}px;
+      padding-top: ${!isEmbed() ? 4 : 0}px;
       visibility: hidden;
       box-shadow: 0px 0px 3px rgba(5, 5, 5, 0.04), 28px 28px 88px rgba(0, 0, 0, 0.08);
     }
@@ -124,12 +105,8 @@ const generateCSS = () => {
 
     .fairmint-invest-button.fairmint-invest-button-icon-only .fairmint-invest-button-wrapper img.fairmint-invest-button-img {
       margin: 0;
-      width: ${
-        fairmintSettings.mobileWidth ? fairmintSettings.mobileWidth : 36
-      }px;
-      height: ${
-        fairmintSettings.mobileHeight ? fairmintSettings.mobileHeight : 36
-      }px;
+      width: ${fairmintSettings.mobileWidth ? fairmintSettings.mobileWidth : 36}px;
+      height: ${fairmintSettings.mobileHeight ? fairmintSettings.mobileHeight : 36}px;
     }
 
     .fairmint-invest-button-wrapper {
@@ -158,12 +135,10 @@ const generateCSS = () => {
 
       .fairmint-invest-button-wrapper img.fairmint-invest-button-img {
         margin: 0;
-        width: ${
-          fairmintSettings.mobileWidth ? fairmintSettings.mobileWidth : 36
-        }px;
-        height: ${
-          fairmintSettings.mobileHeight ? fairmintSettings.mobileHeight : 36
-        }px;
+        width: ${fairmintSettings.mobileWidth ? fairmintSettings.mobileWidth : 36
+    }px;
+        height: ${fairmintSettings.mobileHeight ? fairmintSettings.mobileHeight : 36
+    }px;
       }
     }
   `;
@@ -171,7 +146,7 @@ const generateCSS = () => {
 };
 
 const getIframePosition = (investButton) => {
-  if (isEmbed) {
+  if (isEmbed()) {
     return `
       top: 0;
       left: 0;
@@ -197,30 +172,20 @@ const getIframeContent = (containerIndex) => {
   let content = widgetHTML;
   content = content.replace(
     "#CLOSE_BTN_VISIBLE_CLASS#",
-    !isSm() && !isEmbed ? "fairmint-cafe-widget-close-btn-visible" : ""
+    !isSm() && !isEmbed() ? "fairmint-cafe-widget-close-btn-visible" : ""
   );
   content = content.replace("#CONTAINER_INDEX#", containerIndex);
-  content = content.replace("#BORDER_RADIUS#", isSm() || isEmbed ? 4 : 0);
+  content = content.replace("#BORDER_RADIUS#", isSm() || isEmbed() ? 4 : 0);
   content = content.replace(
     /#COLOR1#/g,
-    offeringStatus.color1 ? offeringStatus.color1 : "rgb(86, 41, 182)"
+    offeringStatus.color1 || "rgb(86, 41, 182)"
   );
   content = content.replace(
     "#COLOR2#",
-    offeringStatus.color2 ? offeringStatus.color2 : "rgb(117, 73, 211)"
+    offeringStatus.color2 || "rgb(117, 73, 211)"
   );
-  content = content.replace(
-    "#COMPANY_NAME_LOGO#",
-    fairmintSettings.companyNameLogo
-      ? fairmintSettings.companyNameLogo
-      : offeringStatus.company_name_logo
-  );
-  content = content.replace(
-    "#CAFE_LOGO#",
-    fairmintSettings.cafeLogo
-      ? fairmintSettings.cafeLogo
-      : offeringStatus.cafe_logo
-  );
+  content = content.replace("#COMPANY_NAME_LOGO#", offeringStatus.company_logo);
+  content = content.replace("#CAFE_LOGO#", offeringStatus.cafe_logo);
   content = content.replace("#CAFE_NAME#", offeringStatus.cafe_name);
   content = content.replace(
     "#LATEST_PRICE#",
@@ -231,7 +196,7 @@ const getIframeContent = (containerIndex) => {
   content = content.replace("#COLOR_BTN#", buttonColor());
   content = content.replace("#WELCOME_MESSAGE#", welcomeMessage());
 
-  if (fairmintSettings.amountInvested) {
+  if (offeringStatus.showAmountInvested) {
     content = content.replace(
       "#AMOUNT_INVESTED#",
       Math.round(offeringStatus.amount_invested).toLocaleString()
@@ -244,7 +209,7 @@ const getIframeContent = (containerIndex) => {
     );
   }
 
-  if (fairmintSettings.companyValuation) {
+  if (offeringStatus.showCompanyValuation) {
     content = content.replace(
       "#COMPANY_VALUATION#",
       Math.round(offeringStatus.company_valuation).toLocaleString()
@@ -257,7 +222,7 @@ const getIframeContent = (containerIndex) => {
     );
   }
 
-  if (fairmintSettings.performance) {
+  if (offeringStatus.showPerformance) {
     content = content.replace(
       "#PERFORMANCE#",
       (offeringStatus.performance || 0).toFixed(1)
@@ -271,7 +236,7 @@ const getIframeContent = (containerIndex) => {
   }
 
   let investorsDom = "";
-  if (investors() >= 5) {
+  if (offeringStatus.showInvestors) {
     investorsDom += `<div class="fairmint-cafe-widget-card-investors">
         <div class="fairmint-cafe-widget-card-investors-label">
           Join our `;
@@ -303,7 +268,7 @@ const generateIframe = (investButton, containerIndex) => {
   widgetFrame.className = "fairmint-widget-frame";
   widgetFrame.style.cssText = getIframePosition(investButton);
 
-  if (isEmbed) {
+  if (isEmbed()) {
     widgetFrame.classList.add("fairmint-widget-frame-visible");
   }
 
@@ -315,7 +280,7 @@ const generateIframe = (investButton, containerIndex) => {
   widgetFrame.appendChild(iframe);
   container.appendChild(widgetFrame);
 
-  if (isEmbed) {
+  if (isEmbed()) {
     investButton.appendChild(container);
   } else {
     document.getElementsByTagName("body")[0].appendChild(container);
@@ -359,7 +324,7 @@ const generateIframe = (investButton, containerIndex) => {
     }
   };
 
-  if (!isEmbed) {
+  if (!isEmbed()) {
     setHandlers();
   }
 
@@ -370,7 +335,7 @@ const generateIframe = (investButton, containerIndex) => {
       iframe.contentWindow.document.write(getIframeContent(containerIndex));
     }
 
-    if (!isEmbed) {
+    if (!isEmbed()) {
       setHandlers();
     }
   });
@@ -405,9 +370,9 @@ const generateButton = (container, containerIndex, isIcon = false) => {
 };
 
 const generateWidget = (container, containerIndex) => {
-  if (isEmbed) {
+  if (isEmbed()) {
     generateIframe(container, containerIndex, true);
-  } else if (fairmintSettings.type === "icon") {
+  } else if (offeringStatus.widget_type === "icon") {
     generateButton(container, containerIndex, true);
   } else {
     // button
@@ -436,8 +401,8 @@ const generateWidget = (container, containerIndex) => {
     fairmintSettings.stage === "production"
       ? "invest"
       : fairmintSettings.stage === "staging"
-      ? "preview"
-      : "dev";
+        ? "preview"
+        : "dev";
 
   fetch(
     `https://api.${stage}.fairmint.co/service1/offering/status?orgId=${fairmintSettings.org}`
