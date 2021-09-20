@@ -1,4 +1,15 @@
-# Steps to install
+# Fairmint Investment Widget
+
+## Development
+1. Run in terminal: `yarn`
+2. Then: `yarn start`
+3. Navigate [http://localhost:5000](http://localhost:5000) to view it in the browser.
+
+## Build & Deploy
+1. Run in terminal: `yarn build`
+2. Rename `widget.js` file inside `dist` folder and upload to S3
+
+## Steps to install
 
 - Create a new DOM element with class name `fairmint-invest-widget`, where you want to replace the `Invest` button and the widget. _`(Do not use button element)`_
 
@@ -19,7 +30,7 @@
 ```
 window.fairmintSettings = {
   org: 'fairmint', // This is your organization id
-  stage: 'production', // Environment Stage value. possible values 'production', 'staging', 'development'.
+  stage: 'production', // Environment Stage value. possible values 'production', 'development'.
   width: 123, // Invest button width in pixel. default: 132
   height: 44, // Invest button height in pixel. default: 48
   mobileWidth: 36, // Invest button width in pixel for mobile. default: 36
@@ -27,7 +38,7 @@ window.fairmintSettings = {
 };
 
 // Do not change below script.
-window.addEventListener("load",(function(){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.src="https://static.fairmint.co/widget/fairmint.20210611.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}),!1);
+window.addEventListener("load",(function(){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.src="https://static.fairmint.co/widget/fairmint.latest.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}),!1);
 ```
 
 Thats it! Enjoy your widget. 😀
@@ -54,7 +65,7 @@ const CAFEWidget = () => {
     script.id = "fairmint-widget-init-script"
     script.type = 'text/javascript';
     script.async = true;
-    script.src = 'https://static.fairmint.co/widget/fairmint.20210611.js';
+    script.src = 'https://static.fairmint.co/widget/fairmint.latest.js';
 
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(script, firstScriptTag);
