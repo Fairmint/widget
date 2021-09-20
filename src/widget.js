@@ -3,7 +3,7 @@ import { isLg, isSm, widgetHTML } from "./common";
 const { fairmintSettings } = window;
 let offeringStatus;
 
-const isEmbed = () => offeringStatus.type === "embed";
+const isEmbed = () => offeringStatus.widget_type === "embed";
 
 const buttonBackground = () =>
   isLg()
@@ -397,12 +397,7 @@ const generateWidget = (container, containerIndex) => {
     return;
   }
 
-  const stage =
-    fairmintSettings.stage === "production"
-      ? "invest"
-      : fairmintSettings.stage === "staging"
-        ? "preview"
-        : "dev";
+  const stage = fairmintSettings.stage === "production" ? "invest" : "dev";
 
   fetch(
     `https://api.${stage}.fairmint.co/service1/offering/status?orgId=${fairmintSettings.org}`
