@@ -129,7 +129,7 @@ export const widgetHTML = `
       width: 36px;
       height: 36px;
       border-radius: 100%;
-      background: #FF875F;
+      background: #FFF;
       color: white;
       font-size: 12px;
       line-height: 16px;
@@ -138,6 +138,10 @@ export const widgetHTML = `
       align-items: center;
       margin-right: 12px;
       overflow: hidden;
+    }
+
+    .fairmint-cafe-widget-card-investor-avatar.you {
+      background: #FF875F;
     }
 
     .fairmint-cafe-widget-card-investor-avatar img {

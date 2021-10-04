@@ -250,7 +250,7 @@ const getIframeContent = (containerIndex) => {
       investorsDom += "</div>";
     }
     investorsDom += `
-      <div class="fairmint-cafe-widget-card-investor-avatar">
+      <div class="fairmint-cafe-widget-card-investor-avatar you">
         YOU
       </div>
       </div>
