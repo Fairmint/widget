@@ -30,7 +30,7 @@
 ```
 window.fairmintSettings = {
   org: 'fairmint', // This is your organization id
-  stage: 'production', // Environment Stage value. possible values 'production', 'development'.
+  stage: 'production',
   width: 123, // Invest button width in pixel. default: 132
   height: 44, // Invest button height in pixel. default: 48
   mobileWidth: 36, // Invest button width in pixel for mobile. default: 36
@@ -58,7 +58,7 @@ const CAFEWidget = () => {
       org: 'fairmint',
       width: 122,
       height: 36,
-      stage: process.env.NODE_ENV,
+      stage: 'production'
     };
 
     const script = document.createElement('script');
