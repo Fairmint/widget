@@ -277,7 +277,7 @@ export const widgetHTML = `
         </div>
 
         <div class="fairmint-cafe-widget-card-offering-feed-description">
-          Valuation: <span>$#COMPANY_VALUATION#</span>
+          Valuation: <span>$#COMPANY_VALUATION#M</span>
         </div>
       </div>
 

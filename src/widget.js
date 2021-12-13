@@ -212,7 +212,7 @@ const getIframeContent = (containerIndex) => {
   if (offeringStatus.showCompanyValuation) {
     content = content.replace(
       "#COMPANY_VALUATION#",
-      Math.round(offeringStatus.company_valuation).toLocaleString()
+      (Math.round(offeringStatus.company_valuation / 1e5) / 10).toLocaleString()
     );
     content = content.replace("#COMPANY_VALUATION_VISIBLE#", "");
   } else {
