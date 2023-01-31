@@ -205,7 +205,7 @@ export const widgetHTML = `
     <div class="fairmint-cafe-widget-card-header">
       <img class="fairmint-cafe-widget-company-name" src="#COMPANY_NAME_LOGO#">
       <div class="fairmint-cafe-widget-company-description">
-        We are an open equity company <span role="img" aria-label="emoji">😃</span>
+        We are an open equity company
       </div>
       <button class="fairmint-cafe-widget-close-btn #CLOSE_BTN_VISIBLE_CLASS#">
         <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
