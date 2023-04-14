@@ -31,7 +31,7 @@ const itemsCount = () => {
 
 const welcomeMessage = () => offeringStatus.welcome_msg || "We are an open equity company";
 
-const frameHeight = () => (offeringStatus.showInvestors ? 459 : 366) + itemsCount() * 40 + 4;
+const frameHeight = () => (offeringStatus.showInvestors ? 459 : 366) + itemsCount() * 40 + 4 - 53;
 
 const generateCSS = () => {
   const style = document.createElement("style");
